@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Jasmine Spec Runner</title>
+
+        <link rel="shortcut icon" type="image/png" href="lib/jasmine-1.2.0/jasmine_favicon.png">
+        <link rel="stylesheet" type="text/css" href="lib/jasmine-1.2.0/jasmine.css">
+        <script type="text/javascript" src="lib/jasmine-1.2.0/jasmine.js"></script>
+        <script type="text/javascript" src="lib/jasmine-1.2.0/jasmine-html.js"></script>
+        <script type="text/javascript" src="../js/rangy/rangy-core.js"></script>
+        <script type="text/javascript" src="../js/rangy/rangy-selectionsaverestore.js"></script>
+        <script type="text/javascript" src="../js/rangy/rangy-serializer.js"></script>
+        <script type="text/javascript" src="../js/jquery-1.8.2.min.js"></script>
+        <script type="text/javascript" src="../js/jquery-ui.min-1.9.0.js"></script>
+        <script type="text/javascript" src="../js/jquery.simulate.js"></script>
+        <script type="text/javascript" src="../js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="../js/jfa.rangetools.js"></script>
+        <script type="text/javascript" src="../js/ui.inline.edit.js"></script>
+
+        <!-- include source files here... -->
+        <script type="text/javascript" src="spec/ui.inline.edit.spec.js"></script>
+
+        <script type="text/javascript">
+            (function() {
+                var jasmineEnv = jasmine.getEnv();
+                jasmineEnv.updateInterval = 1000;
+
+                var htmlReporter = new jasmine.HtmlReporter();
+
+                jasmineEnv.addReporter(htmlReporter);
+
+                jasmineEnv.specFilter = function(spec) {
+                    return htmlReporter.specFilter(spec);
+                };
+
+                var currentWindowOnload = window.onload;
+
+                window.onload = function() {
+                    if (currentWindowOnload) {
+                        currentWindowOnload();
+                    }
+                    execJasmine();
+                };
+
+                function execJasmine() {
+                    jasmineEnv.execute();
+                }
+
+            })();
+        </script>
+    </head>
+
+<body>
+    <div class="testarea" style="display: none;">
+        <h2>Header 2</h2>
+        <p>
+            This is a paragraf
+        </p>
+        <ul>
+            <li>list item 1</li>
+            <li>list item 2</li>
+            <li>list item 3</li>
+        </ul>
+    </div>
+</body>
+</html>
