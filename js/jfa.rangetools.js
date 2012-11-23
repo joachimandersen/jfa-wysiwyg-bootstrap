@@ -7,7 +7,7 @@ window.jfa.rangetools = window.jfa.rangetools || {};
         $(range.commonAncestorContainer.parentNode).replaceWith($('<' + tag + '/>').append($('<li />').html(html)));
     };
     rangetools.applyCommand = function(tag) {
-        var range = rangetools.getSelection(range);
+        var range = rangetools.getSelection();
         if($(range.commonAncestorContainer.parentNode).prop('tagName').toLowerCase() === tag.toLowerCase()) { // Remove tag
             var html = $(range.commonAncestorContainer.parentNode).html();
             range.deleteContents();
@@ -51,6 +51,9 @@ window.jfa.rangetools = window.jfa.rangetools || {};
         var range = rangetools.getSelection();
         return range.collapsed;
     };
+    rangetools.getSelectedText = function() {
+		return rangetools.getSelection().text()
+	};
     rangetools.getSelection = function() {
         var selection = rangy.getSelection();
         var range = null;
@@ -63,24 +66,21 @@ window.jfa.rangetools = window.jfa.rangetools || {};
         return range;
     };
     rangetools.getElementAtCursorPosition = function() {
+		rangy.getSelection().expand('word');
         return rangy.getSelection().anchorNode.parentNode;
     };
+    rangetools.setTextSelection = function(start, len) {
+		rangy.getSelection().removeAllRanges();
+		var range = rangetools.getSelection();
+		range.moveStart("character", start);
+		range.moveEnd("character",len);
+		rangy.getSelection().setSingleRange(range);
+	};
     rangetools.setSelection = function(selector) {
         var element = $(selector)[0];
-        var range;
-        var selection;
-        if (document.body.createTextRange) { //ms
-            range = document.body.createTextRange();
-            range.moveToElementText(element);
-            range.select();
-        }
-        else if (window.getSelection) { //all others
-            selection = window.getSelection();        
-            range = document.createRange();
-            range.selectNodeContents(element);
-            selection.removeAllRanges();
-            selection.addRange(range);
-        }
+        var range = rangy.createRange();
+        range.selectNodeContents(element);
+        rangy.getSelection().setSingleRange(range);
     };
     rangetools.restoreSelection = function(range) {
         var selection = rangy.getSelection();

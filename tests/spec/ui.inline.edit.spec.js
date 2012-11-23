@@ -79,26 +79,18 @@ describe('$.ui.inlineedit', function() {
         });
 
         it('should add a strong tag surrounding the selected text', function() {
-            jfa.rangetools.setSelection('p');
+            jfa.rangetools.setTextSelection(24, 8);
             var id = $('.testarea').data('inline:edit:uuid');
             $('div[data-editor="' + id + '"]').find('button[title="Bold"]').click();
-            expect($('.testarea p').html().trim()).toEqual('<strong>This is a paragraf</strong>')
-        });
-        it('should toggle the bold button', function() {
-            jfa.rangetools.setSelection('p');
-            var id = $('.testarea').data('inline:edit:uuid');
-            $('div[data-editor="' + id + '"]').find('button[title="Bold"]').click();
-            expect($('div[data-editor="' + id + '"]').find('button[title="Bold"]').hasClass('active')).toEqual(true);
-            $('div[data-editor="' + id + '"]').find('button[title="Bold"]').click();
-            expect($('div[data-editor="' + id + '"]').find('button[title="Bold"]').hasClass('active')).toEqual(false);
+            expect($('.testarea p').html().trim()).toEqual('This is a <strong>paragraf</strong>')
         });
     });
 
-    describe('Clicking the bold button while it is toggled', function() {
+    describe('Clicking the bold button while bold text is selected', function() {
         beforeEach(function() {
             $('.testarea').show();
             $('.testarea').focus();
-            jfa.rangetools.setSelection('p');
+            jfa.rangetools.setTextSelection(24, 8);
             var id = $('.testarea').data('inline:edit:uuid');
             $('div[data-editor="' + id + '"]').find('button[title="Bold"]').click();
         });
@@ -109,29 +101,10 @@ describe('$.ui.inlineedit', function() {
         });
 
         it('should remove the strong tag', function() {
-            jfa.rangetools.setSelection('p');
+            jfa.rangetools.setTextSelection(24, 8);
             var id = $('.testarea').data('inline:edit:uuid');
             $('div[data-editor="' + id + '"]').find('button[title="Bold"]').click();
             expect($('.testarea p').html().trim()).toEqual('This is a paragraf')
-        });
-    });
-
-    describe('Placing the cursor inside a bold area', function() {
-        beforeEach(function() {
-            $('.testarea').show();
-            $('.testarea').focus();
-            $('.testarea p').replaceWith('<p>This is a <strong>paragraf</strong></p>')
-        });
-
-        afterEach(function() {
-            $('.testarea').hide();
-            $('.testarea').inlineedit('destroy');
-        });
-        it('should toogle the bold button to indicate that the a press will remove the bold', function() {
-            jfa.rangetools.setSelection('p');
-            var id = $('.testarea').data('inline:edit:uuid');
-            $($('.testarea strong')).trigger('mouseup');
-            expect($('div[data-editor="' + id + '"]').find('button[title="Bold"]').hasClass('active')).toBe(true);
         });
     });
 
@@ -152,23 +125,6 @@ describe('$.ui.inlineedit', function() {
             expect($('.testarea').length).toEqual(0);
             expect($('p').length).toEqual(1);
             $('p').replaceWith($('<div />').addClass('testarea'));
-        });
-    });
-
-    describe('If a click on bold creates an empty tag it', function() {
-        beforeEach(function() {
-            $('.testarea').show();
-            $('.testarea').focus();
-        });
-
-        afterEach(function() {
-            $('.testarea').hide();
-            $('.testarea').inlineedit('destroy');
-        });
-        it('should be cleaned up imediately after', function() {
-            var id = $('.testarea').data('inline:edit:uuid');
-            $('div[data-editor="' + id + '"]').find('button[title="Bold"]').click();
-            expect($('.testarea strong:empty').length).toEqual(0);
         });
     });
 
@@ -237,26 +193,6 @@ describe('$.ui.inlineedit', function() {
             $('div[data-editor="' + id + '"]').find('button[title="Unindent"]').click();
             expect($('.testarea ul:first > li').length).toEqual(3);
             expect($('.testarea ul > li > ul > li').length).toEqual(1);
-        });
-    });
-
-    describe('A click on the unordered list button when the cursor is placed ie in a p and with an empty selection', function() {
-        beforeEach(function() {
-            $('.testarea').show();
-            $('.testarea').focus();
-        });
-
-        afterEach(function() {
-            $('.testarea').hide();
-            $('.testarea').inlineedit('destroy');
-        });
-        it('should add an empty ul', function() {
-            $('.testarea').append($('<p />').html('&nbsp;'));
-            jfa.rangetools.setSelection('.testarea p:last');
-            var id = $('.testarea').data('inline:edit:uuid');
-            $('div[data-editor="' + id + '"]').find('button[title="Unordered list"]').click();
-            expect($('.testarea ul').length).toEqual(2);
-            expect($('.testarea p').length).toEqual(1);
         });
     });
 

@@ -71,7 +71,10 @@
 							$(this).toggleClass('active');
 						}
 						else if ($(this).data('inline:edit:command') !== undefined) {
-							$(this).data('inline:edit:command')(self.options.getelementatcursorcallback());
+							$(this).data('inline:edit:command')(
+                                self.options.getelementatcursorcallback(), 
+                                window.jfa.rangetools.getSelectedText()
+                            );
 						}
 					});
 					btn.bind('inline:edit:selection:changed', function(e, tag) {
@@ -124,8 +127,38 @@
                     }
                 ],
                 [
-                    {title: 'Bold', icon: 'icon-bold', tag: 'strong'}, 
-                    {title: 'Italic', icon: 'icon-italic', tag: 'i'}
+                    {
+                        title: 'Bold', 
+                        icon: 'icon-bold', 
+                        command: function(target, selection) {
+                            if (selection == '') {
+                                return;
+                            }
+                            var tag = $(target);
+                            if (tag.prop('tagName').toLowerCase() != 'strong' && tag.parents('strong').length == 0) {
+                                var html = tag.html();
+                                tag.html(html.replace(selection, $('<div />').append($('<strong />').html(selection)).html()));
+                            }
+                            else {
+                                tag.replaceWith(tag.html());
+                            }
+                        }
+                    }, 
+                    {
+                        title: 'Italic', 
+                        icon: 'icon-italic', 
+                        command: function(target, selection) {
+                            var tag = $(target);
+                            var tag = $(target);
+                            if (tag.prop('tagName').toLowerCase() != 'em') {
+                                var html = tag.html();
+                                tag.html(html.replace(selection, $('<div />').append($('<em />').html(selection)).html()));
+                            }
+                            else {
+                                tag.replaceWith(tag.html());
+                            }
+                        }
+                    }
                 ],
                 [
                     {title: 'Unordered list', icon: 'icon-list', tag: 'ul'},
