@@ -1,3 +1,15 @@
+if (typeof String.prototype.trim != 'function') {
+    String.prototype.trim = function() {
+        var trimmed = '';
+        for (var i = 0; i < this.length; i++) {
+            if (this[i] != ' ') {
+                trimmed += this[i];
+            }
+        }
+        return trimmed;
+    };
+}
+
 describe('$.ui.inlineedit', function() {
 
     var html;
@@ -334,5 +346,62 @@ describe('$.ui.inlineedit', function() {
             expect($('.testarea h2').length).toEqual(2);
             expect($('.testarea h2:last').html().trim()).toEqual('This is a paragraf');
         });        
+    });
+    
+    describe('When the selection is empty', function() {
+        beforeEach(function() {
+            $('.testarea').show();
+            $('.testarea').focus();
+        });
+        afterEach(function() {
+            $('.testarea').hide();
+            $('.testarea').inlineedit('destroy');
+        });
+        
+        it('the un/ordered list buttons should be disabled', function() {
+            $('.testarea').trigger('mouseup');
+            var id = $('.testarea').data('inline:edit:uuid');
+            expect($('div[data-editor="' + id + '"]').find('button[title="Unordered list"]').attr('disabled')).toEqual('disabled');
+            expect($('div[data-editor="' + id + '"]').find('button[title="Ordered list"]').attr('disabled')).toEqual('disabled');
+        });
+        it('the bold button should be enabled', function() {
+            $('.testarea').trigger('mouseup');
+            var id = $('.testarea').data('inline:edit:uuid');
+            expect($('div[data-editor="' + id + '"]').find('button[title="Bold"]').attr('disabled')).toEqual(undefined);
+        });
+    });
+    describe('When the selection is not empty', function() {
+        beforeEach(function() {
+            $('.testarea').show();
+            $('.testarea').focus();
+        });
+        afterEach(function() {
+            $('.testarea').hide();
+            $('.testarea').inlineedit('destroy');
+        });
+        
+        it('the un/ordered list buttons should not be disabled', function() {
+            jfa.rangetools.getSelectedText(24, 8);
+            var id = $('.testarea').data('inline:edit:uuid');
+            expect($('div[data-editor="' + id + '"]').find('button[title="Unordered list"]').attr('disabled')).toEqual(undefined);
+            expect($('div[data-editor="' + id + '"]').find('button[title="Ordered list"]').attr('disabled')).toEqual(undefined);
+        });
+    });
+    
+    describe('When the cursor is placed in a bold area the bold button', function() {
+        beforeEach(function() {
+            $('.testarea').show();
+            $('.testarea').focus();
+        });
+        afterEach(function() {
+            $('.testarea').hide();
+            $('.testarea').inlineedit('destroy');
+        });
+        it('should be active', function() {
+            $('.testarea').append($('<p />').append($('<strong />').html('hello')));
+            $('.testarea strong').trigger('mouseup');
+            var id = $('.testarea').data('inline:edit:uuid');
+            expect($('div[data-editor="' + id + '"]').find('button[title="Bold"]').hasClass('active')).toEqual(true);
+        });
     });
 });

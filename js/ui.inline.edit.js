@@ -21,9 +21,20 @@
 			this.element.bind('keyup', function(e) {
 				if (e.which == 13) {
 					jfa.rangetools.forceParagraf();
-					//self.element.find(':empty').remove();
 				}
 			});
+            this.element.bind('keyup mouseup', function(e) {
+                var eventname;
+                if (self.options.isemptyselectioncallback()) {
+                    eventname = 'selection:cleared';
+                }
+                else {
+                    eventname = 'selection:set'
+                }
+                self.element.data('inline:edit:toolbar')
+					.find('button')
+					.trigger('inline:edit:' + eventname, []);
+            });
 		},
 		_init: function() {
 
@@ -65,16 +76,16 @@
 						.data('inline:edit:command', button.command)
 						.addClass('btn');
 					btn.click(function() {
-						if ($(this).data('inline:edit:tag') !== undefined) {
-							self.options.actioncallback($(this).data('inline:edit:tag'));
-							self.element.find(':empty').remove();
-							$(this).toggleClass('active');
-						}
-						else if ($(this).data('inline:edit:command') !== undefined) {
+						if ($(this).data('inline:edit:command') !== undefined) {
 							$(this).data('inline:edit:command')(
                                 self.options.getelementatcursorcallback(), 
                                 window.jfa.rangetools.getSelectedText()
                             );
+						}
+						else if ($(this).data('inline:edit:tag') !== undefined) {
+							self.options.actioncallback($(this).data('inline:edit:tag'));
+							self.element.find(':empty').remove();
+							$(this).toggleClass('active');
 						}
 					});
 					btn.bind('inline:edit:selection:changed', function(e, tag) {
@@ -85,6 +96,14 @@
 							$(this).addClass('active');
 						}
 					});
+                    if (button.selection === true) {
+                        btn.bind('inline:edit:selection:cleared', function(e) {
+                            $(this).attr('disabled', 'disabled');
+                        });
+                        btn.bind('inline:edit:selection:set', function(e) {
+                            $(this).removeAttr('disabled');
+                        });
+                    }
 					btngroup.append(btn);
 				});
 			});
@@ -106,6 +125,7 @@
 			this.element.removeData('inline:edit:uuid');
 			this.element.unbind('focus');
 			this.element.unbind('mouseup');
+            this.element.unbind('keyup');
 			this.element.unbind('keypress');
 		},
 		options: {
@@ -130,39 +150,23 @@
                     {
                         title: 'Bold', 
                         icon: 'icon-bold', 
-                        command: function(target, selection) {
-                            if (selection == '') {
-                                return;
-                            }
-                            var tag = $(target);
-                            if (tag.prop('tagName').toLowerCase() != 'strong' && tag.parents('strong').length == 0) {
-                                var html = tag.html();
-                                tag.html(html.replace(selection, $('<div />').append($('<strong />').html(selection)).html()));
-                            }
-                            else {
-                                tag.replaceWith(tag.html());
-                            }
-                        }
+                        tag: 'strong',
+                        command: function(target, text) {
+                            window.jfa.wysiwyg.commands.toggleTag(target, text, 'strong');
+                        },
                     }, 
                     {
                         title: 'Italic', 
                         icon: 'icon-italic', 
-                        command: function(target, selection) {
-                            var tag = $(target);
-                            var tag = $(target);
-                            if (tag.prop('tagName').toLowerCase() != 'em') {
-                                var html = tag.html();
-                                tag.html(html.replace(selection, $('<div />').append($('<em />').html(selection)).html()));
-                            }
-                            else {
-                                tag.replaceWith(tag.html());
-                            }
+                        tag: 'em',
+                        command: function(target, text) {
+                            window.jfa.wysiwyg.commands.toggleTag(target, text, 'em');
                         }
                     }
                 ],
                 [
-                    {title: 'Unordered list', icon: 'icon-list', tag: 'ul'},
-                    {title: 'Ordered list', icon: 'icon-th-list', tag: 'ol'},
+                    {title: 'Unordered list', icon: 'icon-list', tag: 'ul', selection: true},
+                    {title: 'Ordered list', icon: 'icon-th-list', tag: 'ol', selection: true},
                     {
                     	title: 'Indent', 
                     	icon: 'icon-indent-left', 
@@ -192,6 +196,19 @@ window.jfa.wysiwyg.commands = window.jfa.wysiwyg.commands || {};
 (function(commands, $, undefined) {
 	'use strict';
 
+    commands.toggleTag = function(target, text, markup) {
+        if (text == '') {
+            return;
+        }
+        var tag = $(target);
+        if (tag.prop('tagName').toLowerCase() != markup && tag.parents(markup).length == 0) {
+            var html = tag.html();
+            tag.html(html.replace(text, $('<div />').append($('<' + markup + ' />').html(text)).html()));
+        }
+        else {
+            tag.replaceWith(tag.html());
+        }
+    };
 	commands.replaceTag = function(target, newtag) {
 		var tag = $(target);
 		if (tag.prop('tagName').toLowerCase() != newtag) {
