@@ -4,6 +4,7 @@
 	$.widget('ui.inlineedit', {
 		_create: function() {
 			var self = this;
+            this._defineButtonGroups();
 			this.element.attr('contenteditable', 'true');
 			this._setData('inline:edit:uuid', this._uniqueIdentifier());
 			this.element.bind('focus', function() {
@@ -46,6 +47,64 @@
 		_init: function() {
 
 		},
+        _defineButtonGroups: function() {
+            if (this.buttongroups === undefined) {
+                this.buttongroups = [
+                    [
+                        {
+                            title: 'Paragraf', 
+                            display: '\u0026lt;p\u0026gt;', 
+                            command: function(target) {
+                                window.jfa.wysiwyg.commands.replaceTag(target, 'p');
+                            }
+                        }, 
+                        {
+                            title: 'Header 2', 
+                            display: '\u0026lt;h2\u0026gt;', 
+                            command: function(target) {
+                                window.jfa.wysiwyg.commands.replaceTag(target, 'h2');
+                            }
+                        }
+                    ],
+                    [
+                        {
+                            title: 'Bold', 
+                            icon: 'icon-bold', 
+                            tag: 'strong',
+                            command: function(target, text) {
+                                window.jfa.wysiwyg.commands.toggleTag(target, text, 'strong');
+                            },
+                        }, 
+                        {
+                            title: 'Italic', 
+                            icon: 'icon-italic', 
+                            tag: 'em',
+                            command: function(target, text) {
+                                window.jfa.wysiwyg.commands.toggleTag(target, text, 'em');
+                            }
+                        }
+                    ],
+                    [
+                        {title: 'Unordered list', icon: 'icon-list', tag: 'ul', selection: true},
+                        {title: 'Ordered list', icon: 'icon-th-list', tag: 'ol', selection: true},
+                        {
+                            title: 'Indent', 
+                            icon: 'icon-indent-left', 
+                            command: function(target) {
+                                window.jfa.wysiwyg.commands.increaseIndent(target);
+                            }
+                        },
+                        {
+                            title: 'Unindent', 
+                            icon: 'icon-indent-right', 
+                            command: function(target) {
+                                window.jfa.wysiwyg.commands.decreaseIndent(target);
+                            }
+                        }
+                    ]
+                ];
+            }
+        },
 		_getToolbar: function() {
 			if (this.element.data('inline:edit:toolbar') === undefined) {
 				var toolbar = $('<div />')
@@ -73,7 +132,7 @@
 		_addToolbarButtons: function(toolbar) {
 			var self = this;
 			var btntoolbar = $('<div />').addClass('btn-toolbar');
-			$.each(this.options.buttongroups, function(index, buttongroup) {
+			$.each(this.buttongroups, function(index, buttongroup) {
 				var btngroup = $('<div />')
 					.addClass('btn-group');
 				btntoolbar.append(btngroup);
@@ -144,60 +203,6 @@
 			this.element.unbind('keypress');
 		},
 		options: {
-            buttongroups: [
-                [
-                    {
-                    	title: 'Paragraf', 
-                    	display: '\u0026lt;p\u0026gt;', 
-                    	command: function(target) {
-                    		window.jfa.wysiwyg.commands.replaceTag(target, 'p');
-                    	}
-                    }, 
-                    {
-                    	title: 'Header 2', 
-                    	display: '\u0026lt;h2\u0026gt;', 
-                    	command: function(target) {
-                    		window.jfa.wysiwyg.commands.replaceTag(target, 'h2');
-                    	}
-                    }
-                ],
-                [
-                    {
-                        title: 'Bold', 
-                        icon: 'icon-bold', 
-                        tag: 'strong',
-                        command: function(target, text) {
-                            window.jfa.wysiwyg.commands.toggleTag(target, text, 'strong');
-                        },
-                    }, 
-                    {
-                        title: 'Italic', 
-                        icon: 'icon-italic', 
-                        tag: 'em',
-                        command: function(target, text) {
-                            window.jfa.wysiwyg.commands.toggleTag(target, text, 'em');
-                        }
-                    }
-                ],
-                [
-                    {title: 'Unordered list', icon: 'icon-list', tag: 'ul', selection: true},
-                    {title: 'Ordered list', icon: 'icon-th-list', tag: 'ol', selection: true},
-                    {
-                    	title: 'Indent', 
-                    	icon: 'icon-indent-left', 
-                    	command: function(target) {
-                    		window.jfa.wysiwyg.commands.increaseIndent(target);
-                    	}
-                    },
-                    {
-                		title: 'Unindent', 
-                		icon: 'icon-indent-right', 
-                		command: function(target) {
-                			window.jfa.wysiwyg.commands.decreaseIndent(target);
-                		}
-                	}
-                ]
-            ],
 			actioncallback: window.jfa.rangetools.applyCommand,
 			getelementatcursorcallback: window.jfa.rangetools.getElementAtCursorPosition,
 			isemptyselectioncallback: window.jfa.rangetools.isEmpty
