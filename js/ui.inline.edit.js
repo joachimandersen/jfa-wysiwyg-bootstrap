@@ -9,6 +9,13 @@
 			this.element.bind('focus', function() {
 				self._getToolbar().show();
 			});
+            this.element.bind('blur', function(e) {
+                setTimeout(
+                    function() {
+                        self._getToolbar().trigger('inline:edit:focus:lost', []);
+                    }, 
+                    100);
+            });
 			this._setData('inline:edit:toolbar', this._getToolbar());
 			this.element.bind('mouseup', function(e) {
 				self.element.data('inline:edit:toolbar')
@@ -51,6 +58,14 @@
 				this._addToolbarButtons(toolbar);
 				toolbar.hide();
 				$('body').append(toolbar);
+                toolbar.bind('mouseup', function() {
+                    $(this).data('do:not:hide', true);
+                });
+                toolbar.bind('inline:edit:focus:lost', function() {
+                    if (!$(this).data('do:not:hide')) {
+                        $(this).hide();
+                    }
+                });
 				return toolbar;
 			}
 			return this.element.data('inline:edit:toolbar');

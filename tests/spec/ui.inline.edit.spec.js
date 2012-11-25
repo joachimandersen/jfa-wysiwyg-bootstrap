@@ -1,13 +1,5 @@
 if (typeof String.prototype.trim != 'function') {
-    String.prototype.trim = function() {
-        var trimmed = '';
-        for (var i = 0; i < this.length; i++) {
-            if (this[i] != ' ') {
-                trimmed += this[i];
-            }
-        }
-        return trimmed;
-    };
+    String.prototype.trim = function(){return this.replace(/^\s\s*/, '').replace(/\s\s*$/, '');};
 }
 
 describe('$.ui.inlineedit', function() {
@@ -402,6 +394,45 @@ describe('$.ui.inlineedit', function() {
             $('.testarea strong').trigger('mouseup');
             var id = $('.testarea').data('inline:edit:uuid');
             expect($('div[data-editor="' + id + '"]').find('button[title="Bold"]').hasClass('active')).toEqual(true);
+        });
+    });
+    
+    describe('When the focus is lost the toolbar', function() {
+        beforeEach(function() {
+            $('.testarea').show();
+            $('.testarea').focus();
+        });
+        afterEach(function() {
+            $('.testarea').hide();
+            $('.testarea').inlineedit('destroy');
+        });
+        it('should be hidden', function() {
+            var id = $('.testarea').data('inline:edit:uuid');
+            runs(function () {
+                expect($('div[data-editor="' + id + '"]').css('display')).toEqual('block');
+                $('.testarea').blur();
+            });
+            waits(200);
+            runs(function () {
+                expect($('div[data-editor="' + id + '"]').css('display')).toEqual('none');
+            });
+        });
+    });
+    
+    describe('When the focus is given to the toolbar', function() {
+        beforeEach(function() {
+            $('.testarea').show();
+            $('.testarea').focus();
+        });
+        afterEach(function() {
+            $('.testarea').hide();
+            $('.testarea').inlineedit('destroy');
+        });
+        it('the toolbar shoul remain visible', function() {
+            var id = $('.testarea').data('inline:edit:uuid');
+            expect($('div[data-editor="' + id + '"]').css('display')).toEqual('block');
+            $('div[data-editor="' + id + '"]').find('button[title="Bold"]').focus();
+            expect($('div[data-editor="' + id + '"]').css('display')).toEqual('block');
         });
     });
 });
