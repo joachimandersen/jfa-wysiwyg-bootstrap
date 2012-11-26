@@ -1,3 +1,11 @@
+/* 
+    jfa WYSIWYG editor plugin
+    version: 0.1
+    author: Joachim Faucon Andersen (http://www.faucon.dk) 
+    plugin home: https://github.com/joachimandersen/jfa-wysiwyg-bootstrap
+    LICENSE: MIT - see LICENSE.txt
+*/
+
 (function($, undefined) {
 	'use strict';
 
@@ -112,7 +120,7 @@
 					.css({
 						position: 'absolute',
 						top: (this.element.position().top - 50) + 'px',
-						left: this.element.position().left + 'px',
+						left: this.element.position().left + 'px'
 					});
 				this._addToolbarButtons(toolbar);
 				toolbar.hide();
