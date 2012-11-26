@@ -17,6 +17,7 @@ used for development:
 * jQuery (1.8.2) - http://www.jquery.com/
 * jQuery ui (1.9.0) - http://www.jqueryui.com/
 * Rangy (1.3 alpha 681) - http://code.google.com/p/rangy/
+* Bootstrap (2.2.1) - http://twitter.github.com/bootstrap
 
 Test
 ----
